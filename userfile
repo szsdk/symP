@@ -1,0 +1,43 @@
+{
+  "userfilesdata": [
+    [
+      "/home/sz/note/Physics/Analytical_Mechanics/note/note.pdf",
+      "evince %s"
+    ]
+  ],
+  "userprogramsdata": [
+    [
+      "google-chrome"
+    ],
+    [
+      "mathematica"
+    ],
+    [
+      "inkscape"
+    ],
+    [
+      "vim"
+    ],
+    [
+      "netease-cloud-music"
+    ],
+    [
+      "baobab"
+    ],
+    [
+      "gnome-disks"
+    ],
+    [
+      "virtualbox"
+    ],
+    [
+      "calibre"
+    ],
+    [
+      "gvim"
+    ],
+    [
+      "texworks"
+    ]
+  ]
+}

@@ -1,0 +1,5 @@
+{
+    "autoupdateprograms": true,
+    "userfilepath": "./userfile",
+    "default_editor": "gvim"
+}
