@@ -104,6 +104,23 @@ class File(object):
             self.rating = string_match(cmd, self.match_string)
         return self.rating
 
+class Website(object):
+    def __init__(self, url):
+        self.url = url
+
+    def __str__(self):
+        return self.url
+
+    def __call__(self):
+        subprocess.Popen(config.browser % self.url, shell=True)
+
+    def rate(self, cmd):
+        if not cmd:
+            self.rating = 1
+        else:
+            self.rating = string_match(cmd, self.url)
+        return self.rating
+
 import math
 class Calculator(object):
     _ns = vars(math).copy()
@@ -210,3 +227,9 @@ class UserFiles(ListGroups):
         super().__init__()
         for args in config.userfilesdata:
             self.items.append(File(*args))
+
+class UserWebsites(ListGroups):
+    def __init__(self):
+        super().__init__()
+        for args in config.userwebsitesdata:
+            self.items.append(Website(*args))

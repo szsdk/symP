@@ -24,6 +24,7 @@ def down(_):
 userprograms = itemsgenerate.UserPrograms()
 userfiles= itemsgenerate.UserFiles()
 recentlyfiles = itemsgenerate.RecentlyFiles()
+userwebsites = itemsgenerate.UserWebsites()
 
 def refresh_listbox(*args):
     cmd = command.get()
@@ -40,6 +41,7 @@ def refresh_listbox(*args):
 
     lstdatas += userfiles(cmd, limit=0.49)
     lstdatas += recentlyfiles(cmd, limit=0.49)
+    lstdatas += userwebsites(cmd, limit=0.49)
     try:
         lstdatas.append(itemsgenerate.Calculator(cmd))
     except:

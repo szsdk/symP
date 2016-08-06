@@ -1,0 +1,14 @@
+{
+    "autoupdateprograms": true,
+    "userfilepath": "~/.symp_userfile",
+    "default_editor": "gvim",
+    "prettypath": 3,
+    "browser": "google-chorme %s",
+    "program2file": {
+        ".jpg":"eog '%s'",
+        ".pdf":"evince '%s'",
+        ".png":"eog '%s'",
+        ".tex":"gvim '%s'",
+        ".mp4":"smplayer '%s'"
+     }
+}

@@ -1,14 +1,15 @@
 import json
 import logging
+import os
 
 FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 logging.basicConfig(format=FORMAT,level=logging.DEBUG)
 
-with open('config', 'r') as configfile:
+with open(os.path.expanduser('~/.symp_config'), 'r') as configfile:
     config = json.load(configfile)
 
 autoupdateprograms = False
-userfilepath = "~"
+userfilepath = os.getenv('HOME')+"/.symp_userfile"
 default_editor = "gvim"
 program2file = {'.jpg':"eog '%s'",
                 '.pdf':"evince '%s'",
@@ -16,6 +17,7 @@ program2file = {'.jpg':"eog '%s'",
                 '.tex':"gvim %s",
                 '.mp4':"smplayer %s"
                 }
+browser = "firefox %s"
 prettypath = 0
 # prettypath controls names of folders displayed in the listbox.
 # If prettypath == 0, show the original name
@@ -32,11 +34,12 @@ for var, val in config.items():
     else:
         logging.error("There is no varible '%s' can be defined. IGNORE IT!", var)
 
-with open(userfilepath, 'r') as userfilefile:
+with open(os.path.expanduser(userfilepath), 'r') as userfilefile:
     userfile = json.load(userfilefile)
 
 userprogramsdata = []
 userfilesdata = []
+userwebsitesdata = []
 for var, val in userfile.items():
     if var in locals():
         locals()[var] = val
