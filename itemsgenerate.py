@@ -36,6 +36,8 @@ class Program(object):
     def rate(self, cmd):
         if not cmd:
             self.rating = 1
+        elif not '/' in cmd:
+            self.rating = string_match(cmd, self.show_string)+0.1
         else:
             self.rating = string_match(cmd, self.show_string)
         return self.rating
@@ -126,6 +128,8 @@ class File(object):
     def rate(self, cmd):
         if not cmd:
             self.rating = 1
+        elif '/' in cmd:
+            self.rating = string_match(cmd, self.match_string)+0.1
         else:
             self.rating = string_match(cmd, self.match_string)
         return self.rating
@@ -135,6 +139,8 @@ class Website(object):
         self.url = url
 
     def __str__(self):
+        if self.rating:
+            return self.rating + self.url
         return self.url
 
     def __call__(self):

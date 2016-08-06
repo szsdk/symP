@@ -13,16 +13,6 @@ FORMAT = '%(levelname)s: %(message)s'
 logging.basicConfig(format=config.FORMAT,level=logging.DEBUG,
         datefmt=config.DATAFORMAT)
 
-def print_hello(_):
-    print(listbox.get(ACTIVE))
-
-def print_keyboard(event, widget):
-    print(event.keysym)
-    print(widget.get())
-
-def down(_):
-    listbox.event_generate('<Down>')
-
 userprograms = itemsgenerate.UserPrograms()
 userfiles= itemsgenerate.UserFiles()
 recentlyfiles = itemsgenerate.RecentlyFiles()
