@@ -31,30 +31,31 @@ filesdirectories = itemsgenerate.FilesDirectories()
 
 def refresh_listbox(*args):
     cmd = command.get()
-    lstdatas = []
-    lstdatas += userprograms(cmd, limit=0.49)
-    if cmd and ((not lstdatas) or (lstdatas and max([i.rating for i in lstdatas])<9)):
+    lstdatas = set([])
+    lstdatas |= userprograms(cmd, limit=0.49)
+    #if cmd and ((not lstdatas) or (lstdatas and max([i.rating for i in lstdatas])<9)):
         #p = subprocess.Popen("type %s" % cmd, shell=True, stdout=subprocess.PIPE,
                 #stderr=subprocess.STDOUT).stdout.readline().decode("utf-8")
         #if p[-1-len(cmd):-1]==cmd:
-        if shutil.which(cmd):
-            tryrun = itemsgenerate.Program("Run: %s" % cmd, cmd)
-            tryrun.info = 'new program'
-            tryrun.rating = 1
-            lstdatas.append(tryrun)
+    if cmd and shutil.which(cmd):
+        tryrun = itemsgenerate.Program(cmd, "Run: %s" % cmd)
+        tryrun.info = 'new program'
+        tryrun.rating = 1
+        lstdatas.add(tryrun)
 
-    lstdatas += userfiles(cmd, limit=0.49)
-    lstdatas += recentlyfiles(cmd, limit=0.49)
-    lstdatas += userwebsites(cmd, limit=0.49)
+    lstdatas |= userfiles(cmd, limit=0.49)
+    lstdatas |= recentlyfiles(cmd, limit=0.49)
+    lstdatas |= userwebsites(cmd, limit=0.49)
     if cmd:
-        lstdatas += filesdirectories(cmd, limit=0.49)
+        lstdatas |= filesdirectories(cmd, limit=0.49)
     try:
-        lstdatas.append(itemsgenerate.Calculator(cmd))
+        lstdatas.add(itemsgenerate.Calculator(cmd))
     except:
         pass
                 
-    lstdatas.sort(key=lambda x: x.rating, reverse=True)
-    listbox.set_data(lstdatas)
+    llstdatas = list(lstdatas)
+    llstdatas.sort(key=lambda x: x.rating, reverse=True)
+    listbox.set_data(llstdatas)
     #listbox.set_data(cmds.range_with_command(cmd))
     #for i in range(len(listbox.data)):
         #listbox.itemconfig(i, {'bg':'#00ffff'})

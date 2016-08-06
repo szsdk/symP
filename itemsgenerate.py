@@ -11,12 +11,12 @@ logging.basicConfig(format=config.FORMAT,level=logging.DEBUG,
         datefmt=config.DATAFORMAT)
 
 class Program(object):
-    def __init__(self, show_string, command=''):
-        self.show_string=show_string
-        if command:
-            self.command=command
+    def __init__(self, command, show_string=''):
+        self.command = command
+        if show_string:
+            self.show_string = show_string
         else:
-            self.command=show_string
+            self.show_string = command
         self.rating = 1
         self.info = ""
 
@@ -111,7 +111,9 @@ class File(object):
         return (self.command == other.command) and (self.file_name == self.file_name)
 
     def __hash__(self):
-        return hash(self.command+self.file_name)
+        if self.command:
+            return hash(self.command+self.file_name)
+        return hash(self.file_name)
     #def to_json(self):
         #if self.show_string = self.file_name:
             #return '["File",["%s", "%s"]]' % (self.file_name, self.command)
@@ -202,9 +204,9 @@ def string_match(cmd, s):
 
 class ListGroups(object):
     def __init__(self):
-        self.items = []
+        self.items = set([])
     def __call__(self, cmd, limit = 0):
-        return [i for i in self.items if i.rate(cmd)>limit]
+        return {i for i in self.items if i.rate(cmd)>limit}
 
 class RecentlyFiles(ListGroups):
     def __init__(self):
@@ -220,11 +222,11 @@ class RecentlyFiles(ListGroups):
 
         logging.info("Start to get files modified recently")
         p = subprocess.Popen("find ~ -not -path '*/\.*' -type f -mtime -1", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        tmpa = []
+        tmpa = set([])
         for i in p.stdout.readlines():
             fn = i.decode("utf-8")[:-1]
             if file_name_filter(fn):
-                tmpa.append(File(fn, None))
+                tmpa.add(File(fn, None))
 
         self.items = tmpa
         logging.info("Finish to get files modified recently")
@@ -257,17 +259,17 @@ class UserPrograms(ListGroups):
         logging.debug('init user programs')
         super().__init__()
         for args in config.userprogramsdata:
-            self.items.append(Program(*args))
+            self.items.add(Program(*args))
     def append(self, cmd):
         config.userprogramsdata.append(cmd.to_json()[1])
-        self.items.append(cmd)
+        self.items.add(cmd)
         config.save_userfile()
 
 class UserFiles(ListGroups):
     def __init__(self):
         super().__init__()
         for args in config.userfilesdata:
-            self.items.append(File(*args))
+            self.items.add(File(*args))
 
 class FilesDirectories(ListGroups):
     def match_filefolder(folder, ml):
@@ -299,7 +301,7 @@ class FilesDirectories(ListGroups):
         self.items = []
 
     def __call__(self, cmd, limit=0 ):
-        self.items = []
+        self.items = set([])
         if cmd[0] == '/':
             searchresult = FilesDirectories.match_filefolder('/', cmd[1:].split('/'))
         else:
@@ -307,11 +309,11 @@ class FilesDirectories(ListGroups):
             searchresult = FilesDirectories.match_filefolder(
                     config.searchroot, cmd.split('/'))
         for filename in searchresult:
-            self.items.append(File(filename))
-        return [i for i in self.items if i.rate(cmd)>limit]
+            self.items.add(File(filename))
+        return {i for i in self.items if i.rate(cmd)>limit}
 
 class UserWebsites(ListGroups):
     def __init__(self):
         super().__init__()
         for args in config.userwebsitesdata:
-            self.items.append(Website(*args))
+            self.items.add(Website(*args))
