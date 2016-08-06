@@ -124,7 +124,8 @@ class Website(object):
 import math
 class Calculator(object):
     _ns = vars(math).copy()
-    _ns['__builtins__'] = None
+    _ns.update(vars())
+    #_ns['__builtins__'] = None
     def __init__(self, cmd):
         self.match_string = str(eval(cmd, Calculator._ns))
         self.show_string = "Calculator: %s" % self.match_string
