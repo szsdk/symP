@@ -3,7 +3,8 @@ import logging
 import os
 
 FORMAT = '%(asctime)s %(levelname)s: %(message)s'
-logging.basicConfig(format=FORMAT,level=logging.DEBUG)
+DATAFORMAT = '%H:%M:%S'
+logging.basicConfig(format=FORMAT,level=logging.DEBUG, datefmt=DATAFORMAT)
 
 with open(os.path.expanduser('~/.symp_config'), 'r') as configfile:
     config = json.load(configfile)
@@ -18,6 +19,7 @@ program2file = {'.jpg':"eog '%s'",
                 '.mp4':"smplayer %s"
                 }
 browser = "firefox %s"
+searchroot = os.path.expanduser("~/")
 prettypath = 0
 # prettypath controls names of folders displayed in the listbox.
 # If prettypath == 0, show the original name
@@ -47,7 +49,7 @@ for var, val in userfile.items():
         logging.error("There is no varible '%s' can be defined. IGNORE IT!", var)
 
 def save_userfile():
-    with open(userfilepath, 'w') as userfilefile:
+    with open(os.path.expanduser(userfilepath), 'w') as userfilefile:
         json.dump({'userprogramsdata':userprogramsdata,
             'userfilesdata':userfilesdata}, userfilefile,
             indent=2)

@@ -5,6 +5,7 @@
     "prettypath": 3,
     "browser": "google-chorme %s",
     "program2file": {
+        "FOLDER": "gnome-terminal --working-directory='%s'",
         ".jpg":"eog '%s'",
         ".pdf":"evince '%s'",
         ".png":"eog '%s'",

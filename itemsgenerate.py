@@ -1,4 +1,5 @@
 import os.path
+import glob
 import subprocess
 import threading
 import logging
@@ -6,9 +7,8 @@ import pickle
 import json
 import config
 
-FORMAT = '%(asctime)s %(levelname)s: %(message)s'
-logging.basicConfig(format=FORMAT,level=logging.DEBUG)
-
+logging.basicConfig(format=config.FORMAT,level=logging.DEBUG,
+        datefmt=config.DATAFORMAT)
 
 class Program(object):
     def __init__(self, show_string, command=''):
@@ -26,6 +26,13 @@ class Program(object):
     def __call__(self):
         subprocess.Popen(self.command, shell=True)
 
+    def __eq__(self, other):
+        if not isinstance(other, Program): return False
+        return self.command == other.command
+
+    def __hash__(self):
+        return hash(self.command)
+
     def rate(self, cmd):
         if not cmd:
             self.rating = 1
@@ -33,18 +40,25 @@ class Program(object):
             self.rating = string_match(cmd, self.show_string)
         return self.rating
 
+    def show_command(self):
+        return self.command
+
     def to_json(self):
         return ["Program",[self.command]]
 
 def choose_program(file_name):
-    ext = os.path.splitext(os.path.basename(file_name))[1]
+    if os.path.isdir(file_name):
+        ext = "FOLDER"
+    else:
+        ext = os.path.splitext(os.path.basename(file_name))[1]
     if ext in config.program2file:
         return config.program2file[ext]
     #return 'gvim %s'
 
 class File(object):
     def __init__(self, file_name, command=None, show_string=None, match_string=None):
-        if not os.path.isfile(file_name):
+        #if not os.path.isfile(file_name):
+        if not glob.glob(file_name):
             raise FileNotFoundError('%s does not exist' % file_name)
         self.file_name=file_name
         if show_string:
@@ -91,11 +105,21 @@ class File(object):
             logging.warning("There is no default program to open %s", fn)
             logging.info("Open %s with default editor %s", fn, config.default_editor)
             subprocess.Popen("%s %s" % (config.default_editor, self.file_name), shell=True)
+
+    def __eq__(self, other):
+        if not isinstance(other, File): return False
+        return (self.command == other.command) and (self.file_name == self.file_name)
+
+    def __hash__(self):
+        return hash(self.command+self.file_name)
     #def to_json(self):
         #if self.show_string = self.file_name:
             #return '["File",["%s", "%s"]]' % (self.file_name, self.command)
         #else:
             #return '["File",["%s", "%s"]]' % (self.file_name, self.command)
+
+    def show_command(self):
+        return self.file_name
 
     def rate(self, cmd):
         if not cmd:
@@ -114,6 +138,16 @@ class Website(object):
     def __call__(self):
         subprocess.Popen(config.browser % self.url, shell=True)
 
+    def __eq__(self, other):
+        if not isinstance(other, Website): return False
+        return self.url == other.url
+
+    def __hash__(self):
+        return hash(self.url)
+
+    def show_command(self):
+        return str(self)
+
     def rate(self, cmd):
         if not cmd:
             self.rating = 1
@@ -127,14 +161,20 @@ class Calculator(object):
     _ns.update(vars())
     #_ns['__builtins__'] = None
     def __init__(self, cmd):
-        self.match_string = str(eval(cmd, Calculator._ns))
-        self.show_string = "Calculator: %s" % self.match_string
+        self.answer = str(eval(cmd, Calculator._ns))
+        self.show_string = "Calculator: %s" % self.answer
         self.rating = 1
     def __str__(self):
         return self.show_string
 
     def __call__(self):
-        return self.match_string
+        return self.answer
+
+    def __eq__(self, other):
+        return False
+
+    def show_command(self):
+        return self()
 
     def rate(self, _):
         return self()
@@ -228,6 +268,47 @@ class UserFiles(ListGroups):
         super().__init__()
         for args in config.userfilesdata:
             self.items.append(File(*args))
+
+class FilesDirectories(ListGroups):
+    def match_filefolder(folder, ml):
+        either =lambda c: '[%s%s]'%(c.lower(),c.upper()) if c.isalpha() else c
+        searchitem = ml.pop(0)
+        searchitem = ''.join(map(either,searchitem))
+        if not searchitem:
+            yield folder
+            return
+        if len(ml) == 0:
+            for dotindex in range(len(searchitem)-1, -1, -1):
+                if searchitem[dotindex] == '.': break
+            if searchitem[dotindex] == '.':
+                nam = searchitem[0:dotindex]
+                ext = searchitem[dotindex:]
+                for i in glob.glob("%s*%s*%s*" %(folder,nam,ext)):
+                    yield i
+            else:
+                for i in glob.glob("%s*%s*" % (folder, searchitem)):
+                    if not os.path.splitext(os.path.basename(i))[1]:
+                        yield i
+        else:
+            li = glob.glob(folder + "/*" + searchitem + "*/")
+            for i in li:
+                yield from FilesDirectories.match_filefolder(i, ml.copy())
+
+    def __init__(self):
+        super().__init__()
+        self.items = []
+
+    def __call__(self, cmd, limit=0 ):
+        self.items = []
+        if cmd[0] == '/':
+            searchresult = FilesDirectories.match_filefolder('/', cmd[1:].split('/'))
+        else:
+            logging.debug(cmd)
+            searchresult = FilesDirectories.match_filefolder(
+                    config.searchroot, cmd.split('/'))
+        for filename in searchresult:
+            self.items.append(File(filename))
+        return [i for i in self.items if i.rate(cmd)>limit]
 
 class UserWebsites(ListGroups):
     def __init__(self):

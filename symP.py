@@ -7,9 +7,11 @@ import itemsgenerate
 import config
 import logging
 import subprocess
+import shutil
 
-FORMAT = '%(asctime)s %(levelname)s: %(message)s'
-logging.basicConfig(format=FORMAT,level=logging.DEBUG)
+FORMAT = '%(levelname)s: %(message)s'
+logging.basicConfig(format=config.FORMAT,level=logging.DEBUG,
+        datefmt=config.DATAFORMAT)
 
 def print_hello(_):
     print(listbox.get(ACTIVE))
@@ -25,15 +27,17 @@ userprograms = itemsgenerate.UserPrograms()
 userfiles= itemsgenerate.UserFiles()
 recentlyfiles = itemsgenerate.RecentlyFiles()
 userwebsites = itemsgenerate.UserWebsites()
+filesdirectories = itemsgenerate.FilesDirectories()
 
 def refresh_listbox(*args):
     cmd = command.get()
     lstdatas = []
     lstdatas += userprograms(cmd, limit=0.49)
     if cmd and ((not lstdatas) or (lstdatas and max([i.rating for i in lstdatas])<9)):
-        p = subprocess.Popen("type %s" % cmd, shell=True, stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT).stdout.readline().decode("utf-8")
-        if p[-1-len(cmd):-1]==cmd:
+        #p = subprocess.Popen("type %s" % cmd, shell=True, stdout=subprocess.PIPE,
+                #stderr=subprocess.STDOUT).stdout.readline().decode("utf-8")
+        #if p[-1-len(cmd):-1]==cmd:
+        if shutil.which(cmd):
             tryrun = itemsgenerate.Program("Run: %s" % cmd, cmd)
             tryrun.info = 'new program'
             tryrun.rating = 1
@@ -42,6 +46,8 @@ def refresh_listbox(*args):
     lstdatas += userfiles(cmd, limit=0.49)
     lstdatas += recentlyfiles(cmd, limit=0.49)
     lstdatas += userwebsites(cmd, limit=0.49)
+    if cmd:
+        lstdatas += filesdirectories(cmd, limit=0.49)
     try:
         lstdatas.append(itemsgenerate.Calculator(cmd))
     except:
@@ -53,22 +59,16 @@ def refresh_listbox(*args):
     #for i in range(len(listbox.data)):
         #listbox.itemconfig(i, {'bg':'#00ffff'})
 
-def text_changed(*args):
-    #pass
-    logging.debug(command.get())
-    cmd = command.get()
-    #print(list(filter(lambda x: cmd in str(x), commanddata)))
-    #listbox.set_data(cmds.range_with_command(cmd))
-
 def complete_command(_):
-    command.set(listbox.get(ACTIVE))
+    cmd = listbox.data[listbox.get(ACTIVE)]
+    command.set(cmd.show_command())
 
 def run(_):
     cmd = listbox.data[listbox.get(ACTIVE)]
     logging.info('run %s', cmd)
 
     if type(cmd)==itemsgenerate.Calculator:
-        command.set(cmd.match_string)
+        command.set(cmd.show_command())
         return
 
     root.withdraw()
