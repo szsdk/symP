@@ -29,6 +29,15 @@ It is an alternative for Listary in Linux.
 * <kbd>L</kbd>: Goto the last item on display
 * <kbd>ESCAPE</kbd>: Focus the Command Textbox
 
+### Command Type
+
+* **User program**
+* **User files**
+* **Files modified recently**
+* **User websites**
+* **Calculator**
+    Exmaple: `1+sin(pi/6)`, `sum(range(101))`
+
 ### Configure
 The main default configure file is `~/.symp_config`. All configure files use the JSON format.
 
