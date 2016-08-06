@@ -1,4 +1,5 @@
-# using Tkinter's Optionmenu() as a combobox
+#!/usr/bin/python3
+
 from tkinter import *
 from tkinter import ttk
 from functools import partial
@@ -102,7 +103,7 @@ fun_key = {'ctrl':4,
            'alt': 8,
            'win':64}
 def check_hotkey(ctl, key, aEvent):
-    logging.debug("check_hotkey ctl:%s key:% aEvent:%s", ctl, key, aEvent)
+    #logging.debug("check_hotkey ctl:%s key:% aEvent:%s", ctl, key, aEvent)
     try:
         if ctl:
             if aEvent.state != sum(map(lambda x: fun_key[x], ctl)):
@@ -148,11 +149,10 @@ class KeyBind(threading.Thread):
                 if root.winfo_viewable():
                     root.withdraw()
                     recentlyfiles.refresh_items()
-                    #cmds.refresh_originaldata_file()
                 else:
-                    #cmds.refresh_commanddata()
-                    #listbox.set_data(cmds.commanddata)
                     refresh_listbox()
+                    entry.focus_set()
+                    command.set('')
                     root.deiconify()
 
                 self.windows_state = not self.windows_state

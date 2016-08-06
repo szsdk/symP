@@ -36,20 +36,14 @@ class Program(object):
     def to_json(self):
         return ["Program",[self.command]]
 
-default_editor = "gvim"
-program2file = {'.jpg':"eog '%s'",
-                '.pdf':"evince '%s'",
-                '.png':"eog '%s'",
-                '.tex':"gvim %s"
-                }
 def choose_program(file_name):
     ext = os.path.splitext(os.path.basename(file_name))[1]
-    if ext in program2file:
-        return program2file[ext]
+    if ext in config.program2file:
+        return config.program2file[ext]
     #return 'gvim %s'
 
 class File(object):
-    def __init__(self, file_name, command=None, show_string=None):
+    def __init__(self, file_name, command=None, show_string=None, match_string=None):
         if not os.path.isfile(file_name):
             raise FileNotFoundError('%s does not exist' % file_name)
         self.file_name=file_name
@@ -57,6 +51,16 @@ class File(object):
             self.show_string = show_string
         else:
             self.show_string = file_name
+
+        if match_string:
+            self.show_string = match_string
+        else:
+            self.match_string = self.show_string
+
+        userpath = os.path.expanduser('~')
+        if self.show_string[:len(userpath)] == userpath:
+            self.show_string = '~'+self.show_string[len(userpath):]
+
         if command:
             self.command=command
         else:
@@ -65,7 +69,19 @@ class File(object):
         self.rating = 1
 
     def __str__(self):
-        return self.show_string
+        if config.prettypath:
+            path, filename = os.path.split(self.show_string)
+            folders = path.split('/')
+            newfn = '/' if [0]=='/' else ''
+            for folder in folders:
+                if folder:
+                    if len(folder) <= config.prettypath+1:
+                        newfn += folder + '/'
+                    else:
+                        newfn += folder[0:config.prettypath]+'*/'
+            return newfn + filename
+        else:
+            return self.show_string
 
     def __call__(self):
         if self.command:
@@ -73,8 +89,8 @@ class File(object):
         else:
             fn = os.path.basename(self.file_name)
             logging.warning("There is no default program to open %s", fn)
-            logging.info("Open %s with default editor %s", fn, default_editor)
-            subprocess.Popen("%s %s" % (default_editor, self.file_name), shell=True)
+            logging.info("Open %s with default editor %s", fn, config.default_editor)
+            subprocess.Popen("%s %s" % (config.default_editor, self.file_name), shell=True)
     #def to_json(self):
         #if self.show_string = self.file_name:
             #return '["File",["%s", "%s"]]' % (self.file_name, self.command)
@@ -85,7 +101,7 @@ class File(object):
         if not cmd:
             self.rating = 1
         else:
-            self.rating = string_match(cmd, self.show_string)
+            self.rating = string_match(cmd, self.match_string)
         return self.rating
 
 import math
@@ -101,6 +117,9 @@ class Calculator(object):
 
     def __call__(self):
         return self.match_string
+
+    def rate(self, _):
+        return self()
 
 def string_match(cmd, s):
     a = cmd.lower()
@@ -147,7 +166,7 @@ class RecentlyFiles(ListGroups):
         for i in p.stdout.readlines():
             fn = i.decode("utf-8")[:-1]
             if file_name_filter(fn):
-                tmpa.append(File(fn, None, '~'+fn[len(os.path.expanduser('~')):]))
+                tmpa.append(File(fn, None))
 
         self.items = tmpa
         logging.info("Finish to get files modified recently")
@@ -165,9 +184,6 @@ class RecentlyFiles(ListGroups):
             self._originaldatathread = threading.Thread(target = self._get_recently_files)
             self._originaldatathread.start()
             self._originaldatathread.join()
-            with open('listdat.json','w') as lstfile:
-                json.dump(tmpa, lstfile)
-
 
 # this is the llcs algorithm but too slow
 #table = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
@@ -194,4 +210,3 @@ class UserFiles(ListGroups):
         super().__init__()
         for args in config.userfilesdata:
             self.items.append(File(*args))
-

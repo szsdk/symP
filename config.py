@@ -9,12 +9,22 @@ with open('config', 'r') as configfile:
 
 autoupdateprograms = False
 userfilepath = "~"
-default_editor = "vim"
+default_editor = "gvim"
 program2file = {'.jpg':"eog '%s'",
                 '.pdf':"evince '%s'",
                 '.png':"eog '%s'",
-                '.tex':"gvim %s"
+                '.tex':"gvim %s",
+                '.mp4':"smplayer %s"
                 }
+prettypath = 0
+# prettypath controls names of folders displayed in the listbox.
+# If prettypath == 0, show the original name
+# If not, when the length of the folder name is morethan prettypath,
+# replace characters beyond the first prettypath with '*'
+# For example, if prettypath == 3, then the
+# /usr/local/texlive/2015/release-texlive.txt is shown sa
+# /usr/loc*/tex*/2015/release-texlive.txt is shown sa
+
 
 for var, val in config.items():
     if var in locals():

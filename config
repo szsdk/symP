@@ -1,5 +1,6 @@
 {
     "autoupdateprograms": true,
     "userfilepath": "./userfile",
-    "default_editor": "gvim"
+    "default_editor": "gvim",
+    "prettypath": 3
 }
