@@ -3,9 +3,8 @@
 It is an alternative for Listary in Linux.
 
 ## TO-LIST
-1. Pretty path
-    1. Do not short the short path
-    2. Dynamics change the show_string
+1. more flexible vim-mode shortcuts
+2. search engine
 
 ## Usage
 
@@ -32,8 +31,9 @@ It is an alternative for Listary in Linux.
 
 * **User program**
 * **User files**
-* **Files modified recently**
 * **User websites**
+* **Files and Directories**
+* **Files modified recently**
 * **Calculator**
     Exmaple: `1+sin(pi/6)`, `sum(range(101))`
 

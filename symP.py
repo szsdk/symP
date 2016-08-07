@@ -38,6 +38,7 @@ def refresh_listbox(*args):
     lstdatas |= userwebsites(cmd, limit=0.49)
     if cmd:
         lstdatas |= filesdirectories(cmd, limit=0.49)
+
     try:
         lstdatas.add(itemsgenerate.Calculator(cmd))
     except:
@@ -46,9 +47,9 @@ def refresh_listbox(*args):
     llstdatas = list(lstdatas)
     llstdatas.sort(key=lambda x: x.rating, reverse=True)
     listbox.set_data(llstdatas)
-    #listbox.set_data(cmds.range_with_command(cmd))
-    #for i in range(len(listbox.data)):
-        #listbox.itemconfig(i, {'bg':'#00ffff'})
+    lenlbox = len(llstdatas)
+    for i in range(len(listbox.data)):
+        listbox.itemconfig(i,itemsgenerate.color_theme_bg(type(llstdatas[i]), i/lenlbox))
 
 def complete_command(_):
     cmd = listbox.data[listbox.get(ACTIVE)]

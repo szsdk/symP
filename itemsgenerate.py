@@ -60,7 +60,7 @@ def choose_program(file_name):
 class File(object):
     def __init__(self, file_name, command=None, show_string=None, match_string=None):
         #if not os.path.isfile(file_name):
-        if not glob.glob(file_name):
+        if not glob.escape(glob.escape(file_name)):
             raise FileNotFoundError('%s does not exist' % file_name)
         self.file_name=file_name
         if show_string:
@@ -85,7 +85,7 @@ class File(object):
         self.rating = 1
 
     def __str__(self):
-        if config.prettypath:
+        if len(self.show_string)>55 and config.prettypath :
             path, filename = os.path.split(self.show_string)
             folders = path.split('/')
             newfn = '/' if [0]=='/' else ''
@@ -95,6 +95,11 @@ class File(object):
                         newfn += folder + '/'
                     else:
                         newfn += folder[0:config.prettypath]+'*/'
+            #nam, ext = os.path.splitext(filename)
+            #if ext:
+                #filename = nam[0:config.prettypath] + '*' + ext
+            #else:
+                #filename = filename[0:config.prettypath]+"*"
             return newfn + filename
         else:
             return self.show_string
@@ -139,8 +144,6 @@ class Website(object):
         self.url = url
 
     def __str__(self):
-        if self.rating:
-            return self.rating + self.url
         return self.url
 
     def __call__(self):
@@ -165,9 +168,9 @@ class Website(object):
 
 import math
 class Calculator(object):
+    color = '#ff0f0f'
     _ns = vars(math).copy()
     _ns.update(vars())
-    #_ns['__builtins__'] = None
     def __init__(self, cmd):
         self.answer = str(eval(cmd, Calculator._ns))
         self.show_string = "Calculator: %s" % self.answer
@@ -181,11 +184,27 @@ class Calculator(object):
     def __eq__(self, other):
         return False
 
+    def __hash__(self):
+        return 0
+
     def show_command(self):
         return self()
 
     def rate(self, _):
         return self()
+
+import colorsys
+class2hue= { Program: 0.1,
+        File: 0.4,
+        Calculator: 0.0,
+        Website: 0.7}
+def color_theme_bg(itemclass, rank):
+    br, bg, bb = colorsys.hls_to_rgb(
+            class2hue[itemclass], rank/3+0.6, 0.7)
+    fr, fg, fb = colorsys.hls_to_rgb(
+            0, rank/2, 0.0)
+    return {'bg':"#%02x%02x%02x" % (int(br*256), int(bg*256), int(bb*256)),
+    'fg':"#%02x%02x%02x" % (int(fr*256), int(fg*256), int(fb*256))}
 
 def string_match(cmd, s):
     a = cmd.lower()

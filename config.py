@@ -51,5 +51,5 @@ for var, val in userfile.items():
 def save_userfile():
     with open(os.path.expanduser(userfilepath), 'w') as userfilefile:
         json.dump({'userprogramsdata':userprogramsdata,
-            'userfilesdata':userfilesdata}, userfilefile,
-            indent=2)
+            'userfilesdata':userfilesdata, 'userwebsitesdata':userwebsitesdata},
+            userfilefile, indent=2)
