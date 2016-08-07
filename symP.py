@@ -43,6 +43,7 @@ def refresh_listbox(*args):
         lstdatas.add(itemsgenerate.Calculator(cmd))
     except:
         pass
+    lstdatas.add(itemsgenerate.SearchEngine(cmd))
                 
     llstdatas = list(lstdatas)
     llstdatas.sort(key=lambda x: x.rating, reverse=True)
@@ -155,8 +156,8 @@ class KeyBind(threading.Thread):
 default_width = 600
 default_height = 400
 
-root=Tk()
-root.title('Nothing')
+root=Tk(className='symp')
+root.title('SymP')
 #======= Center the Window ========
 # Apparently a common hack to get the window size. Temporarily hide the
 # window to avoid update_idletasks() drawing the window in the wrong

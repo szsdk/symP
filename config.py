@@ -10,24 +10,32 @@ with open(os.path.expanduser('~/.symp_config'), 'r') as configfile:
     config = json.load(configfile)
 
 autoupdateprograms = False
+# Whether update the `userprogramsdata` if run a new program
 userfilepath = os.getenv('HOME')+"/.symp_userfile"
-default_editor = "gvim"
+# The path stores the userfile
+defaulteditor = "gvim"
+# The default editor
 program2file = {'.jpg':"eog '%s'",
                 '.pdf':"evince '%s'",
                 '.png':"eog '%s'",
                 '.tex':"gvim %s",
                 '.mp4':"smplayer %s"
                 }
-browser = "firefox %s"
+# The programs used to open the corresponding formats of files
+searchengine = {"name":"GOOGLE", "url": "http://www.google.com/search?hl=&q=%s&btnG=Google+Search&inurl=https"}
+# The search engine
+browser = "firefox '%s'"
+# The command of browser used to open an URL
 searchroot = os.path.expanduser("~/")
+# The path used to search files and directoies
 prettypath = 0
 # prettypath controls names of folders displayed in the listbox.
 # If prettypath == 0, show the original name
 # If not, when the length of the folder name is morethan prettypath,
 # replace characters beyond the first prettypath with '*'
 # For example, if prettypath == 3, then the
-# /usr/local/texlive/2015/release-texlive.txt is shown sa
-# /usr/loc*/tex*/2015/release-texlive.txt is shown sa
+# /usr/local/texlive/2015/release-texlive.txt is shown as
+# /usr/loc*/tex*/2015/release-texlive.txt.
 
 
 for var, val in config.items():

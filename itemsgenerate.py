@@ -110,8 +110,8 @@ class File(object):
         else:
             fn = os.path.basename(self.file_name)
             logging.warning("There is no default program to open %s", fn)
-            logging.info("Open %s with default editor %s", fn, config.default_editor)
-            subprocess.Popen("%s %s" % (config.default_editor, self.file_name), shell=True)
+            logging.info("Open %s with default editor %s", fn, config.defaulteditor)
+            subprocess.Popen("%s %s" % (config.defaulteditor, self.file_name), shell=True)
 
     def __eq__(self, other):
         if not isinstance(other, File): return False
@@ -141,10 +141,10 @@ class File(object):
 
 class Website(object):
     def __init__(self, url):
-        self.url = url
+        self.show_string = self.url = url
 
     def __str__(self):
-        return self.url
+        return self.show_string
 
     def __call__(self):
         subprocess.Popen(config.browser % self.url, shell=True)
@@ -164,6 +164,15 @@ class Website(object):
             self.rating = 1
         else:
             self.rating = string_match(cmd, self.url)
+        return self.rating
+
+class SearchEngine(Website):
+    def __init__(self, words):
+        super().__init__(config.searchengine["url"] % words)
+        self.show_string = "%s: %s" % (config.searchengine["name"], words)
+        self.rating = 0.7
+
+    def rate(self):
         return self.rating
 
 import math
@@ -197,7 +206,9 @@ import colorsys
 class2hue= { Program: 0.1,
         File: 0.4,
         Calculator: 0.0,
-        Website: 0.7}
+        Website: 0.7,
+        SearchEngine: 0.75
+        }
 def color_theme_bg(itemclass, rank):
     br, bg, bb = colorsys.hls_to_rgb(
             class2hue[itemclass], rank/3+0.6, 0.7)

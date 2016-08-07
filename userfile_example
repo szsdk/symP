@@ -1,4 +1,18 @@
 {
+  "userwebsitesdata": [
+    [
+      "www.zhihu.com"
+    ]
+  ],
+  "userfilesdata": [
+    [
+      "/home/sz/note/Physics/Analytical_Mechanics/note/note.pdf",
+      "evince %s"
+    ],
+    [
+      "/home/sz/"
+    ]
+  ],
   "userprogramsdata": [
     [
       "google-chrome"
@@ -32,20 +46,9 @@
     ],
     [
       "gvim"
-    ]
-  ],
-  "userfilesdata": [
-    [
-      "/home/sz/note/Physics/Analytical_Mechanics/note/note.pdf",
-      "evince %s"
     ],
     [
-      "/home/sz/"
-    ]
-  ],
-  "userwebsitesdata": [
-    [
-      "www.zhihu.com"
+      "xprop"
     ]
   ]
 }

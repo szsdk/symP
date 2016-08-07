@@ -1,9 +1,9 @@
 {
     "autoupdateprograms": true,
     "userfilepath": "~/.symp_userfile",
-    "default_editor": "gvim",
+    "defaulteditor": "gvim",
     "prettypath": 3,
-    "browser": "google-chorme %s",
+    "browser": "google-chrome '%s'",
     "program2file": {
         "FOLDER": "gnome-terminal --working-directory='%s'",
         ".jpg":"eog '%s'",
