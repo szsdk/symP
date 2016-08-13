@@ -37,7 +37,6 @@ prettypath = 0
 # /usr/local/texlive/2015/release-texlive.txt is shown as
 # /usr/loc*/tex*/2015/release-texlive.txt.
 
-
 for var, val in config.items():
     if var in locals():
         locals()[var] = val

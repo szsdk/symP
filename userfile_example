@@ -1,9 +1,4 @@
 {
-  "userwebsitesdata": [
-    [
-      "www.zhihu.com"
-    ]
-  ],
   "userfilesdata": [
     [
       "/home/sz/note/Physics/Analytical_Mechanics/note/note.pdf",
@@ -49,6 +44,14 @@
     ],
     [
       "xprop"
+    ],
+    [
+      "gnome-calculator"
+    ]
+  ],
+  "userwebsitesdata": [
+    [
+      "www.zhihu.com"
     ]
   ]
 }

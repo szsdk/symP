@@ -177,7 +177,6 @@ class SearchEngine(Website):
 
 import math
 class Calculator(object):
-    color = '#ff0f0f'
     _ns = vars(math).copy()
     _ns.update(vars())
     def __init__(self, cmd):
@@ -308,6 +307,7 @@ class UserFiles(ListGroups):
             self.items.add(File(*args))
 
 class FilesDirectories(ListGroups):
+
     def match_filefolder(folder, ml):
         either =lambda c: '[%s%s]'%(c.lower(),c.upper()) if c.isalpha() else c
         searchitem = ml.pop(0)
@@ -345,6 +345,7 @@ class FilesDirectories(ListGroups):
             searchresult = FilesDirectories.match_filefolder(
                     config.searchroot, cmd.split('/'))
         for filename in searchresult:
+            logging.debug("add to search list: %s", filename)
             self.items.add(File(filename))
         return {i for i in self.items if i.rate(cmd)>limit}
 

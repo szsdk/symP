@@ -10,6 +10,7 @@
         ".pdf":"evince '%s'",
         ".png":"eog '%s'",
         ".tex":"gvim '%s'",
-        ".mp4":"smplayer '%s'"
+        ".mp4":"smplayer '%s'",
+        ".mkv":"smplayer '%s'"
      }
 }
