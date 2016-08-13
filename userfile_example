@@ -53,5 +53,8 @@
     [
       "www.zhihu.com"
     ]
+  ],
+  "usersearchroots": [
+    "~/", "~/note","/media/Other/Kindle/physics"
   ]
 }

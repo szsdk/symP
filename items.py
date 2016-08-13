@@ -291,7 +291,7 @@ class RecentlyFiles(ListGroups):
 
 class UserPrograms(ListGroups):
     def __init__(self):
-        logging.debug('init user programs')
+        logging.info('init user programs')
         super().__init__()
         for args in config.userprogramsdata:
             self.items.add(Program(*args))
@@ -328,7 +328,10 @@ class FilesDirectories(ListGroups):
                     if not os.path.splitext(os.path.basename(i))[1]:
                         yield i
         else:
-            li = glob.glob(folder + "/*" + searchitem + "*/")
+            if folder[-1] == '/':
+                li = glob.glob(folder + "*" + searchitem + "*/")
+            else:
+                li = glob.glob(folder + "/*" + searchitem + "*/")
             for i in li:
                 yield from FilesDirectories.match_filefolder(i, ml.copy())
 
@@ -339,14 +342,14 @@ class FilesDirectories(ListGroups):
     def __call__(self, cmd, limit=0 ):
         self.items = set([])
         if cmd[0] == '/':
-            searchresult = FilesDirectories.match_filefolder('/', cmd[1:].split('/'))
+            for filename in FilesDirectories.match_filefolder('/', cmd[1:].split('/')):
+                self.items.add(File(filename))
         else:
-            logging.debug(cmd)
-            searchresult = FilesDirectories.match_filefolder(
-                    config.searchroot, cmd.split('/'))
-        for filename in searchresult:
-            logging.debug("add to search list: %s", filename)
-            self.items.add(File(filename))
+            for searchroot in config.usersearchroots:
+                searchresult = FilesDirectories.match_filefolder(
+                        searchroot, cmd.split('/'))
+                for filename in searchresult:
+                    self.items.add(File(filename))
         return {i for i in self.items if i.rate(cmd)>limit}
 
 class UserWebsites(ListGroups):

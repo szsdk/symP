@@ -26,8 +26,6 @@ searchengine = {"name":"GOOGLE", "url": "http://www.google.com/search?hl=&q=%s&b
 # The search engine
 browser = "firefox '%s'"
 # The command of browser used to open an URL
-searchroot = os.path.expanduser("~/")
-# The path used to search files and directoies
 prettypath = 0
 # prettypath controls names of folders displayed in the listbox.
 # If prettypath == 0, show the original name
@@ -46,6 +44,8 @@ for var, val in config.items():
 with open(os.path.expanduser(userfilepath), 'r') as userfilefile:
     userfile = json.load(userfilefile)
 
+usersearchroots = ["~/"]
+# The path used to search files and directoies
 userprogramsdata = []
 userfilesdata = []
 userwebsitesdata = []
@@ -55,8 +55,12 @@ for var, val in userfile.items():
     else:
         logging.error("There is no varible '%s' can be defined. IGNORE IT!", var)
 
+usersearchroots = list(map(os.path.expanduser, usersearchroots))
+
 def save_userfile():
     with open(os.path.expanduser(userfilepath), 'w') as userfilefile:
         json.dump({'userprogramsdata':userprogramsdata,
-            'userfilesdata':userfilesdata, 'userwebsitesdata':userwebsitesdata},
+            'userfilesdata':userfilesdata,
+            'userwebsitesdata':userwebsitesdata,
+            'usersearchroots':usersearchroots},
             userfilefile, indent=2)

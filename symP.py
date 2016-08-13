@@ -3,7 +3,7 @@
 from tkinter import *
 from tkinter import ttk
 from functools import partial
-import itemsgenerate
+import items
 import config
 import logging
 import subprocess
@@ -13,11 +13,11 @@ FORMAT = '%(levelname)s: %(message)s'
 logging.basicConfig(format=config.FORMAT,level=logging.DEBUG,
         datefmt=config.DATAFORMAT)
 
-userprograms = itemsgenerate.UserPrograms()
-userfiles= itemsgenerate.UserFiles()
-recentlyfiles = itemsgenerate.RecentlyFiles()
-userwebsites = itemsgenerate.UserWebsites()
-filesdirectories = itemsgenerate.FilesDirectories()
+userprograms = items.UserPrograms()
+userfiles= items.UserFiles()
+recentlyfiles = items.RecentlyFiles()
+userwebsites = items.UserWebsites()
+filesdirectories = items.FilesDirectories()
 
 def refresh_listbox(*args):
     cmd = command.get()
@@ -28,7 +28,7 @@ def refresh_listbox(*args):
                 #stderr=subprocess.STDOUT).stdout.readline().decode("utf-8")
         #if p[-1-len(cmd):-1]==cmd:
     if cmd and shutil.which(cmd):
-        tryrun = itemsgenerate.Program(cmd, "Run: %s" % cmd)
+        tryrun = items.Program(cmd, "Run: %s" % cmd)
         tryrun.info = 'new program'
         tryrun.rating = 1
         lstdatas.add(tryrun)
@@ -40,17 +40,17 @@ def refresh_listbox(*args):
         lstdatas |= filesdirectories(cmd, limit=0.49)
 
     try:
-        lstdatas.add(itemsgenerate.Calculator(cmd))
+        lstdatas.add(items.Calculator(cmd))
     except:
         pass
-    lstdatas.add(itemsgenerate.SearchEngine(cmd))
+    lstdatas.add(items.SearchEngine(cmd))
                 
     llstdatas = list(lstdatas)
     llstdatas.sort(key=lambda x: x.rating, reverse=True)
     listbox.set_data(llstdatas)
     lenlbox = len(llstdatas)
     for i in range(len(listbox.data)):
-        listbox.itemconfig(i,itemsgenerate.color_theme_bg(type(llstdatas[i]), i/lenlbox))
+        listbox.itemconfig(i,items.color_theme_bg(type(llstdatas[i]), i/lenlbox))
 
 def complete_command(_):
     cmd = listbox.data[listbox.get(ACTIVE)]
@@ -60,13 +60,13 @@ def run(_):
     cmd = listbox.data[listbox.get(ACTIVE)]
     logging.info('run %s', cmd)
 
-    if type(cmd)==itemsgenerate.Calculator:
+    if type(cmd)==items.Calculator:
         command.set(cmd.show_command())
         return
 
     root.withdraw()
-    if type(cmd)==itemsgenerate.Program and cmd.info=="new program":
-        logging.debug("try to add new program %s", cmd)
+    if type(cmd)==items.Program and cmd.info=="new program":
+        logging.info("try to add new program %s", cmd)
         cmd.show_string = cmd.command
         cmd.info = ''
         userprograms.append(cmd)
@@ -183,9 +183,9 @@ entry.pack()
 #entry.bind('<Tab>', lambda _: listbox.focus_set())
 entry.focus_set()
 
-logging.debug('start')
+logging.info('start')
 
-#cmds= itemsgenerate.CommandData()
+#cmds= items.CommandData()
 #listbox.set_data(cmds.commanddata)
 #listbox.bind('<Return>', partial(print_keyboard, widget=listbox))
 #listbox.bind('<Return>', print_hello)
