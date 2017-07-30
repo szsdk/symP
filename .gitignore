@@ -1,3 +1,5 @@
 *~
 *.swp
 temp/
+_*
+__pycache__/*

@@ -176,9 +176,18 @@ class SearchEngine(Website):
         return self.rating
 
 import math
+import sympy.physics.units as unit
 class Calculator(object):
     _ns = vars(math).copy()
     _ns.update(vars())
+    _ns['h'] = unit.hour
+    _ns['s'] = unit.second
+    _ns['convert'] = unit.convert_to
+    _ns['Byte'] = unit.byte
+    _ns['KB'] = unit.kibibyte
+    _ns['MB'] = unit.mebibyte
+    _ns['GB'] = unit.gibibyte
+    print(_ns)
     def __init__(self, cmd):
         self.answer = str(eval(cmd, Calculator._ns))
         self.show_string = "Calculator: %s" % self.answer

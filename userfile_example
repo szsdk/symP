@@ -8,6 +8,16 @@
       "/home/sz/"
     ]
   ],
+  "userwebsitesdata": [
+    [
+      "www.zhihu.com"
+    ]
+  ],
+  "usersearchroots": [
+    "/home/sz/",
+    "/home/sz/note",
+    "/media/Other/Kindle/physics"
+  ],
   "userprogramsdata": [
     [
       "google-chrome"
@@ -47,14 +57,48 @@
     ],
     [
       "gnome-calculator"
-    ]
-  ],
-  "userwebsitesdata": [
+    ],
     [
-      "www.zhihu.com"
+      "transmission-gtk"
+    ],
+    [
+      "fontforge"
+    ],
+    [
+      "gnome-system-monitor"
+    ],
+    [
+      "gnome-mines"
+    ],
+    [
+      "gimp"
+    ],
+    [
+      "deadbeef"
+    ],
+    [
+      "mendeleydesktop"
+    ],
+    [
+      "ls"
+    ],
+    [
+      "firefox"
+    ],
+    [
+      "tilda"
+    ],
+    [
+      "shutter"
+    ],
+    [
+      "musescore"
+    ],
+    [
+      "libreoffice"
+    ],
+    [
+      "blender"
     ]
-  ],
-  "usersearchroots": [
-    "~/", "~/note","/media/Other/Kindle/physics"
   ]
 }
